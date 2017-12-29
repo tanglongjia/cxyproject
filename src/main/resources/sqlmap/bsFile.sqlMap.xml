@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxy.web.po.BsFile" >
+  <resultMap id="BaseResultMap" type="com.cxy.web.po.BsFile" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fileName" property="fileName" jdbcType="VARCHAR" />
+    <result column="filePath" property="filePath" jdbcType="VARCHAR" />
+    <result column="viewFilePath" property="viewFilePath" jdbcType="VARCHAR" />
+    <result column="fileType" property="fileType" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="createdby" property="createdby" jdbcType="INTEGER" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="updatedby" property="updatedby" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, fileName, filePath,viewFilePath,fileType, created, createdby, updated, updatedby, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bs_file
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getAll"  resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from bs_file
+    where 1 =1 and status = 1
+  </select>
+  
+  
+  <select id="selectSingle"  resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+    <include refid="Base_Column_List" />
+    from bs_file
+    where 1 =1 and status = 1 and id=#{id}
+  </select>
+  
+  <delete id="deleteFile" parameterType="java.lang.Integer">
+  	delete from bs_file where id = #{id}
+  </delete>
+  
+  <select id="selectPage" parameterType="com.cxy.web.po.BsFile" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from bs_file
+    where 1 =1 and status = 1
+    <if test="fileName!=null and fileName!=''">
+    	and fileName LIKE concat(concat('%',#{fileName}),'%')
+    </if>
+    <if test="fileType !=null and fileType !='' and fileType !='000'">
+    	and fileType = #{fileType}
+    </if>
+  </select>
+  
+  <insert id="insert" parameterType="com.cxy.web.po.BsFile" >
+  	insert into bs_file( fileName, filePath,viewFilePath,fileType, created, createdby, updated, updatedby, status)
+  	values (#{fileName}, #{filePath},#{viewFilePath},#{fileType}, #{created}, #{createdby}, #{updated}, #{updatedby}, #{status})
+  </insert>
+  
+</mapper>

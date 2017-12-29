@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+            http://www.springframework.org/schema/context   
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+            http://www.springframework.org/schema/aop 
+            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+            http://www.springframework.org/schema/mvc  
+            http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+            http://www.springframework.org/schema/tx 
+            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- 0：加入aop注解 对Controller生效 记录日志需要 -->
+	<aop:aspectj-autoproxy />
+
+	<!-- 1：对web包中的所有类进行扫描，以完成Bean创建和自动依赖注入的功能 -->
+	<context:component-scan base-package="com.cxy.web.controller">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+	<!-- 2：开启注解 -->
+	<mvc:annotation-driven />
+
+	<!--3：对模型视图名称的解析，即在模型视图名称添加前后缀 tiles 默认视图 
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles-layout.xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.tiles3.TilesView" />
+		<property name="order" value="1" />
+	</bean> -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/" />
+		<property name="suffix" value=".jsp" />
+	</bean> 
+
+	<!--4：文件上傳的解析，即在模型视图名称添加前后缀 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- defaultEncoding必须和用户JSP的pageEncoding属性一致 -->
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="maxUploadSize" value="10000000" />
+		<!-- uploadTempDir文件上传完成后，临时目录中的临时文件会被自动清除 -->
+		<property name="uploadTempDir" value="upload/temp"/>
+	</bean>
+
+	<!--5：拦截器 用于登录权限验证 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.cxy.web.interceptor.SecurityInterceptor">
+				<property name="excludeUrls">
+					<list>
+						<value>/logout</value>
+						<value>/doLogin</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- 6对静态资源文件的访问 不支持访问WEB-INF目录 -->
+	<mvc:default-servlet-handler />
+
+</beans>
