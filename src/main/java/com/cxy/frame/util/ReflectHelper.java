@@ -4,8 +4,8 @@ package com.cxy.frame.util;
 /*
  * 文件名：ReflectHelper.java
  *
- * �? 能： 利用java反射机制，提供访问类的详细信息和类对象的工具方法�?
- * �? 名： ReflectHelper
+ * 利用java反射机制，提供访问类的详细信息和类对象的工具方法
+ * ReflectHelper
  *
  **/
 
